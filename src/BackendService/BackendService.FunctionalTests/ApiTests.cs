@@ -16,13 +16,26 @@ public class ApiTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task Can_Get_Actuator_Info()
+    public async Task Can_Get_Actuator_Info_v1()
     {
         // Arrange
         var client = _factory.CreateClient();
 
         // Act
         var response = await client.GetFromJsonAsync<Info>("/api/v1/actuator/info");
+
+        // Assert
+        Assert.True(response?.ProcessorCount > 0);
+    }
+
+    [Fact]
+    public async Task Can_Get_Actuator_Info_v2()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetFromJsonAsync<Info>("/api/v2/actuator/info");
 
         // Assert
         Assert.True(response?.ProcessorCount > 0);
