@@ -1,4 +1,4 @@
-namespace Backend.Models;
+namespace BackendService6.Models;
 
 public class Info
 {
