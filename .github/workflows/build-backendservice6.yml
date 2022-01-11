@@ -1,16 +1,16 @@
-name: .NET
+name: BackendService .NET6
 
 on:
   push:
     branches:
     - main
     paths:
-    - 'src/BackendService/**'
+    - 'src/BackendService6/**'
   pull_request:
     branches:
     - main
     paths:
-    - 'src/BackendService/**'
+    - 'src/BackendService6/**'
   workflow_dispatch:
 
 env:
@@ -33,12 +33,12 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: src/BackendService
+      working-directory: src/BackendService6
 
     - name: Build
       run: dotnet build --no-restore
-      working-directory: src/BackendService
+      working-directory: src/BackendService6
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
-      working-directory: src/BackendService
+      working-directory: src/BackendService6
