@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backapi6
+  name: backapi6
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backapi6
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: backapi6
+    spec:
+      volumes:
+      - name: diagnostics
+        emptyDir: {}
+      containers:
+      - image: ghcr.io/levi106/backapi6:0.0.2
+        name: backapi6
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      - image: mcr.microsoft.com/dotnet/monitor:6.0
+        name: sidecar
+        ports:
+        - containerPort: 52325
+        # args: ["--urls", "http://*:52323", "--metricUrls", "http://*:52325"]
+        volumeMounts:
+        - name: diagnostics
+          mountPath: /tmp
