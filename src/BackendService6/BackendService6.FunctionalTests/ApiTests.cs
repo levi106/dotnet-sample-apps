@@ -25,6 +25,6 @@ public class ApiTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await client.GetFromJsonAsync<Info>("/api/v1/actuator/info");
 
         // Assert
-        Assert.True(response?.ProcessorCount > 0);
+        Assert.True(response?.ProcessorInfo.ProcessorCount > 0);
     }
 }

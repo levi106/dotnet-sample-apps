@@ -17,14 +17,25 @@ spec:
         app: backapi6
     spec:
       volumes:
-      - name: diagnostics
+      - name: diagvol
         emptyDir: {}
+      - name: dumpsvol
+        emptyDir: {}
+      - name: apikey
+        secret: 
+          secretName: apikey
+      - name: customcert
+        secret:
+          secretName: customcert
       containers:
       - image: ghcr.io/levi106/backapi6:0.0.2
         name: backapi6
         ports:
         - containerPort: 443
         - containerPort: 80
+        env:
+        - name: DOTNET_DiagnosticPorts
+          value: /diag/port
         resources:
           requests:
             memory: "128Mi"
@@ -32,11 +43,53 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
-      - image: mcr.microsoft.com/dotnet/monitor:6.0
-        name: sidecar
-        ports:
-        - containerPort: 52325
-        # args: ["--urls", "http://*:52323", "--metricUrls", "http://*:52325"]
         volumeMounts:
-        - name: diagnostics
-          mountPath: /tmp
+        - mountPath: /diag
+          name: diagvol
+        - mountPath: /dumps
+          name: dumpsvol
+      - image: mcr.microsoft.com/dotnet/monitor:6.0
+        name: dotnetmonitoragent
+        env:
+          - name: DOTNETMONITOR_DiagnosticPort__ConnectionMode
+            value: Listen
+          - name: DOTNETMONITOR_DiagnosticPort__EndpointName
+            value: /diag/port
+          - name: DOTNETMONITOR_Storage__DumpTempFolder
+            value: /dumps
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+            valueFrom:
+              secretKeyRef:
+                  name: customcert
+                  key: pass
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+            value: /etc/aspnet/customcert/customcert.pfx
+          - name: Authentication__MonitorApiKey__Subject
+            valueFrom:
+              secretKeyRef:
+                key: Authentication__MonitorApiKey__Subject
+                name: apikey
+          - name: Authentication__MonitorApiKey__PublicKey
+            valueFrom:
+              secretKeyRef:
+                key: Authentication__MonitorApiKey__PublicKey
+                name: apikey
+        ports:
+        - containerPort: 52323
+        # args: ["--urls", "http://*:52323", "--metricUrls", "http://*:52325"]
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: diagvol
+          mountPath: /diag
+        - name: dumpsvol
+          mountPath: /dumps
+        - name: customcert
+          mountPath: /etc/aspnet/customcert
+        # - name: apikey
+        #   mountPath: /etc/dotnet-monitor
