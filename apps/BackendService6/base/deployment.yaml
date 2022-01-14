@@ -28,7 +28,7 @@ spec:
         secret:
           secretName: customcert
       containers:
-      - image: ghcr.io/levi106/backapi6:0.0.2
+      - image: ghcr.io/levi106/backapi6:0.0.3
         name: backapi6
         ports:
         - containerPort: 443
