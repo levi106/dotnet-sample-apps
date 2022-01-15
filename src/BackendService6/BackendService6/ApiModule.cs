@@ -13,9 +13,19 @@ public static class ApiModule
         {
             return new Info
             {
-                ProcessorInfo = new ProcessorInfo(),
-                GCMemoryInfo = new GCMemoryInfo(GC.GetGCMemoryInfo()),
-                MemoryInfo = new MemoryInfo()
+                ProcessorInfo = new ProcessorInfo
+                {
+                    ProcessorCount = Environment.ProcessorCount
+                },
+                MyGCMemoryInfo = new MyGCMemoryInfo(GC.GetGCMemoryInfo()),
+                MemoryInfo = new MemoryInfo
+                {
+                    TotalAllocatedBytes = GC.GetTotalAllocatedBytes(),
+                    TotalMemory = GC.GetTotalMemory(false),
+                    Gen0CollectionCount = GC.CollectionCount(0),
+                    Gen1CollectionCount = GC.CollectionCount(1),
+                    Gen2CollectionCount = GC.CollectionCount(2)
+               }
             };
         })
         .Produces<Info>();

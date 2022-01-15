@@ -1,31 +1,25 @@
 namespace BackendService6.Models;
 
-public struct ProcessorInfo
+public class ProcessorInfo
 {
-    public int ProcessorCount { get; init; } = Environment.ProcessorCount;
+    public int ProcessorCount { get; init; } = 0;
 }
 
-public struct MemoryInfo
+public class MemoryInfo
 {
-    public MemoryInfo()
-    {
-        TotalAllocatedBytes = GC.GetTotalAllocatedBytes();
-        TotalMemory = GC.GetTotalMemory(false);
-        Gen0CollectionCount = GC.CollectionCount(0);
-        Gen1CollectionCount = GC.CollectionCount(1);
-        Gen2CollectionCount = GC.CollectionCount(2);
-    }
-
-    public long TotalAllocatedBytes { get; init; }
-    public long TotalMemory { get; init; }
-    public int Gen0CollectionCount { get; init; }
-    public int Gen1CollectionCount { get; init; }
-    public int Gen2CollectionCount { get; init; }
+    public long TotalAllocatedBytes { get; init; } = 0;
+    public long TotalMemory { get; init; } = 0;
+    public int Gen0CollectionCount { get; init; } = 0;
+    public int Gen1CollectionCount { get; init; } = 0;
+    public int Gen2CollectionCount { get; init; } = 0;
 }
 
-public struct GCMemoryInfo
+public class MyGCMemoryInfo
 {
-    public GCMemoryInfo(System.GCMemoryInfo info)
+    public MyGCMemoryInfo()
+    { }
+
+    public MyGCMemoryInfo(System.GCMemoryInfo info)
     {
         Compacted = info.Compacted;
         Concurrent = info.Concurrent;
@@ -43,25 +37,25 @@ public struct GCMemoryInfo
         TotalCommittedBytes = info.TotalCommittedBytes;
     }
 
-    public bool Compacted { get; init; }
-    public bool Concurrent { get; init; }
-    public long FinalizationPendingCount { get; init; }
-    public long FragmentedBytes { get; init; }
-    public int Generation { get; init; }
-    public long HeapSizeBytes { get; init; }
-    public long HighMemoryLoadThresholdBytes { get; init; }
-    public long Index { get; init; }
-    public long MemoryLoadBytes { get; init; }
-    public double PauseTimePercentage { get; init; }
-    public long PinnedObjectsCount { get; init; }
-    public long PromotedBytes { get; init; }
-    public long TotalAvailableMemoryBytes { get; init; }
-    public long TotalCommittedBytes { get; init; }
+    public bool Compacted { get; init; } = false;
+    public bool Concurrent { get; init; } = false;
+    public long FinalizationPendingCount { get; init; } = 0;
+    public long FragmentedBytes { get; init; } = 0;
+    public int Generation { get; init; } = 0;
+    public long HeapSizeBytes { get; init; } = 0;
+    public long HighMemoryLoadThresholdBytes { get; init; } = 0;
+    public long Index { get; init; } = 0;
+    public long MemoryLoadBytes { get; init; } = 0;
+    public double PauseTimePercentage { get; init; } = 0;
+    public long PinnedObjectsCount { get; init; } = 0;
+    public long PromotedBytes { get; init; } = 0;
+    public long TotalAvailableMemoryBytes { get; init; } = 0;
+    public long TotalCommittedBytes { get; init; } = 0;
 }
 
 public class Info
 {
-    public ProcessorInfo ProcessorInfo { get; init; }
-    public GCMemoryInfo GCMemoryInfo { get; init; }
-    public MemoryInfo MemoryInfo { get; init; }
+    public ProcessorInfo ProcessorInfo { get; init; } = null!;
+    public MyGCMemoryInfo MyGCMemoryInfo { get; init; } = null!;
+    public MemoryInfo MemoryInfo { get; init; } = null!;
 }
