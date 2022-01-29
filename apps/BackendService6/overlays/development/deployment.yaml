@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backapi6
+spec:
+  template:
+    metadata:
+      labels:
+        app: backapi6
+    spec:
+      containers:
+      - image: mcr.microsoft.com/dotnet/monitor:6.0
+        name: monitor
+        args: [ "--no-auth" ]
+        env:
+          - name: DOTNETMONITOR_Urls
+            value: http://localhost:52323
