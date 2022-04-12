@@ -7,10 +7,11 @@ public static class ApiModule
 {
     private static ConcurrentQueue<byte[]> memoryQueue_ = new ();
 
-    public static IEndpointRouteBuilder MapApiRoutes(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapApiRoutes(this WebApplication app)
     {
-        builder.MapGet("api/v1/actuator/info", () =>
+        app.MapGet("api/v1/actuator/info", () =>
         {
+            app.Logger.LogInformation("actuator info");
             return new Info
             {
                 ProcessorInfo = new ProcessorInfo
@@ -30,8 +31,9 @@ public static class ApiModule
         })
         .Produces<Info>();
 
-        builder.MapPost("api/v1/leak/{size:long}", (long size) =>
+        app.MapPost("api/v1/leak/{size:long}", (long size) =>
         {
+            app.Logger.LogInformation($"leak {size} MB");
             var array = new byte[size * 1000000];
             array.AsSpan().Fill(42);
             memoryQueue_.Enqueue(array);
@@ -39,20 +41,22 @@ public static class ApiModule
         })
         .Produces<string>();
 
-        builder.MapPost("api/v1/gc", () =>
+        app.MapPost("api/v1/gc", () =>
         {
+            app.Logger.LogInformation("gc");
             GC.Collect();
             return "Ok";
         })
         .Produces<string>();
 
-        builder.MapPost("api/v1/free", () =>
+        app.MapPost("api/v1/free", () =>
         {
+            app.Logger.LogInformation("free");
             memoryQueue_.Clear();
             return "Ok";
         })
         .Produces<string>();
 
-        return builder;
+        return app;
     }
 }
