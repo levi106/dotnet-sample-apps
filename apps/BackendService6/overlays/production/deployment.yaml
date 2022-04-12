@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backapi6
+spec:
+  template:
+    metadata:
+      labels:
+        app: backapi6
+    spec:
+      volumes:
+      - name: customcert
+        secret:
+          secretName: customcert
+      containers:
+      - image: mcr.microsoft.com/dotnet/monitor:6.0
+        name: monitor
+        env:
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+            valueFrom:
+              secretKeyRef:
+                  name: customcert
+                  key: pass
+          - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+            value: /etc/aspnet/customcert/customcert.pfx
+          - name: Authentication__MonitorApiKey__Subject
+            valueFrom:
+              secretKeyRef:
+                key: Subject
+                name: apikey
+          - name: Authentication__MonitorApiKey__PublicKey
+            valueFrom:
+              secretKeyRef:
+                key: PublicKey
+                name: apikey
+        volumeMounts:
+        - name: customcert
+          mountPath: /etc/aspnet/customcert

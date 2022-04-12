@@ -4,7 +4,6 @@ metadata:
   labels:
     app: backapi6
   name: backapi6
-  namespace: backend
 spec:
   ports:
   - name: https
